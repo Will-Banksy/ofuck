@@ -106,7 +106,7 @@ let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = try match inst_ptr |>
     tape,
     (if (List.nth tape dat_ptr) |> Char.code == 0 then inst_ptr + 1 else match find_matching_jfz toks inst_ptr with
       | Some i -> i
-      | None -> assert false),
+      | None -> raise NoMatchingBracket),
     dat_ptr
   )
   with Failure _ -> (tape, inst_ptr, dat_ptr)
