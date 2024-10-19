@@ -111,8 +111,6 @@ let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = match inst_ptr |> Lis
   )
 
 let rec eval_toks toks tape inst_ptr dat_ptr in_chan out_chan =
-  (* Printf.printf "IP: %i (%a), DAT: %i, *DAT: %i\n%!" inst_ptr print_tok (List.nth toks inst_ptr) dat_ptr (List.nth tape dat_ptr); *)
-  (* Thread.delay 0.1; *)
   let (next_tape, next_inst_ptr, next_dat_ptr) = eval_tok toks tape inst_ptr dat_ptr in_chan out_chan in
   if next_inst_ptr >= (toks |> List.length) then
     ()
