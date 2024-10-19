@@ -64,7 +64,7 @@ let find_matching_jfz toks ip = let (_, matching) =
     ) (0, None) in
   matching
 
-let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = match inst_ptr |> List.nth toks with
+let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = try match inst_ptr |> List.nth toks with
   | NoTok -> (tape, inst_ptr + 1, dat_ptr)
   | Forwards -> (
     (if (tape |> List.length) <= (dat_ptr + 1) then tape @ [0 |> Char.chr] else tape),
@@ -81,7 +81,7 @@ let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = match inst_ptr |> Lis
     dat_ptr
   )
   | Decrement -> (
-    tape |> List.mapi (fun i n -> if i = dat_ptr then (if ((Char.code n) - 1) < 0 then 255 else 0) |> Char.chr else n),
+    tape |> List.mapi (fun i n -> if i = dat_ptr then (if ((Char.code n) - 1) < 0 then 255 else (Char.code n) - 1) |> Char.chr else n),
     inst_ptr + 1,
     dat_ptr
   )
@@ -109,6 +109,7 @@ let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = match inst_ptr |> Lis
       | None -> assert false),
     dat_ptr
   )
+  with Failure _ -> (tape, inst_ptr, dat_ptr)
 
 let rec eval_toks toks tape inst_ptr dat_ptr in_chan out_chan =
   let (next_tape, next_inst_ptr, next_dat_ptr) = eval_tok toks tape inst_ptr dat_ptr in_chan out_chan in
