@@ -1,2 +1,3 @@
 (library
- (name ofuck))
+ (name ofuck)
+ (libraries threads))

@@ -8,6 +8,7 @@ let get_lines () = let lines_mut = ref [] in
     done
   with End_of_file -> !lines_mut ;;
 
-let () = let toks = get_lines () |> List.map (Brainfuck.parse_bytes) |> List.concat in
-  List.length toks |> printf "Num tokens: %i\n"; ;;
-   (* TODO: Write interpreter *)
+let () = let toks = get_lines () |> List.map (Brainfuck.parse_bytes) |> List.concat |> List.filter (fun e -> e != Brainfuck.NoTok) in
+  printf "%s\n%!" "Starting brainfuck interpreter...";
+  (* List.length toks |> printf "Num tokens: %i\n"; *)
+  Brainfuck.eval_toks toks [0] 0 0 stdin stdout ;;
