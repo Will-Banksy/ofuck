@@ -5,22 +5,20 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github Will-Banksy/ofuck))
 
-(authors "Author Name")
+(authors "WillBanksy")
 
-(maintainers "Maintainer Name")
+(maintainers "WillBanksy")
 
-(license LICENSE)
-
-(documentation https://url/to/documentation)
+(license MIT)
 
 (package
  (name ofuck)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Simple brainfuck interpreter")
+ (description "Simple, low performance/inefficient implementation of brainfuck")
  (depends ocaml dune)
  (tags
-  (topics "to describe" your project)))
+  ("brainfuck" "interpreter")))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html

@@ -67,7 +67,7 @@ let find_matching_jfz toks ip = let (_, matching) =
 let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = match inst_ptr |> List.nth toks with
   | NoTok -> (tape, inst_ptr + 1, dat_ptr)
   | Forwards -> (
-    (if (tape |> List.length) <= (dat_ptr + 1) then tape @ [0; 0] else tape),
+    (if (tape |> List.length) <= (dat_ptr + 1) then tape @ [0 |> Char.chr] else tape),
     inst_ptr + 1,
     dat_ptr + 1
   )
@@ -76,35 +76,35 @@ let eval_tok toks tape inst_ptr dat_ptr in_chan out_chan = match inst_ptr |> Lis
     inst_ptr + 1,
     Int.max 0 (dat_ptr - 1))
   | Increment -> (
-    tape |> List.mapi (fun i n -> if i = dat_ptr then n + 1 else n),
+    tape |> List.mapi (fun i n -> if i = dat_ptr then ((Char.code n) + 1) mod 255 |> Char.chr else n),
     inst_ptr + 1,
     dat_ptr
   )
   | Decrement -> (
-    tape |> List.mapi (fun i n -> if i = dat_ptr then n - 1 else n),
+    tape |> List.mapi (fun i n -> if i = dat_ptr then (if ((Char.code n) - 1) < 0 then 255 else 0) |> Char.chr else n),
     inst_ptr + 1,
     dat_ptr
   )
   | Output -> (
-    tape |> List.mapi (fun i n -> if i = dat_ptr then (n |> Char.chr |> output_char out_chan; n) else n),
+    (List.nth tape dat_ptr) |> output_char out_chan; tape,
     inst_ptr + 1,
     dat_ptr
   )
   | Input -> (
-    tape |> List.mapi (fun i n -> if i = dat_ptr then (input_char in_chan) |> Char.code else n),
+    tape |> List.mapi (fun i n -> if i = dat_ptr then input_char in_chan else n),
     inst_ptr + 1,
     dat_ptr
   )
   | JumpForwardsIfZero -> (
     tape,
-    (if try (List.nth tape dat_ptr) != 0 with Failure _ -> assert false then inst_ptr + 1 else match find_matching_jbnz toks inst_ptr with
+    (if try (List.nth tape dat_ptr) |> Char.code != 0 with Failure _ -> assert false then inst_ptr + 1 else match find_matching_jbnz toks inst_ptr with
       | Some i -> i
       | None -> raise NoMatchingBracket),
     dat_ptr
   )
   | JumpBackwardsIfnZero -> (
     tape,
-    (if (List.nth tape dat_ptr) == 0 then inst_ptr + 1 else match find_matching_jfz toks inst_ptr with
+    (if (List.nth tape dat_ptr) |> Char.code == 0 then inst_ptr + 1 else match find_matching_jfz toks inst_ptr with
       | Some i -> i
       | None -> assert false),
     dat_ptr

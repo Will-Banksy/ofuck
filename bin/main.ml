@@ -13,7 +13,7 @@ let run_bf_chan in_chan out_chan =
     |> List.concat
     |> List.filter (fun e -> e != Brainfuck.NoTok)
   in
-    Brainfuck.eval_toks toks [0] 0 0 in_chan out_chan
+    Brainfuck.eval_toks toks [0 |> Char.chr] 0 0 in_chan out_chan
 
 let () = let in_chan =
   if Sys.argv |> Array.length > 1 then
